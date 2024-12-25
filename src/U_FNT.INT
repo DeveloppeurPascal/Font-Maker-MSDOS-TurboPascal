@@ -1,0 +1,78 @@
+unit u_fnt;
+{
+Auteur: Premartin Patrick
+Date: 08/09/1991.
+      09/09/1991.
+      14/11/1991.
+Langage: Turbo Pascal 6.0
+But: Proc‚dures et fonctions permettant de modifier les trames des caractŠres
+     de codes 0 … 255. (en fait, les 256 nouveaux caractŠres sont accessibles
+     en mode graphique avec les proc‚dures d'affichage incluses)
+}
+interface
+const
+     nb_max_fnt = 10;
+
+type
+    t_char_mat = array [1..8] of byte;
+    p_fnt = ^t_fnt;
+    t_fnt = array [0..255] of t_char_mat;
+    t_fnt_regs = byte;
+    t_ecr_mode = (transparent, normal);
+
+var
+   fnt_last : t_fnt_regs;
+   ecr_mode : t_ecr_mode;
+
+function fnt_load (nom_fich : string) : p_fnt;
+         { Codes de retour: - pointeur vers la fonte charg‚e;
+                            - NIL si erreur (pas assez de m‚moire, nom de
+                            fichier incorrect ...).
+         }
+function fnt_save (nom_fich : string; number : t_fnt_regs) : byte;
+         { Codes de retour: - 0 si aucune erreur;
+                            - 1 si erreur de sauvegarde;
+                            - 2 si NUMBER n'est pas valide;
+                            - 3 si ce num‚ro n'est pas affect‚.
+         }
+function fnt_register (fnt : p_fnt; number : t_fnt_regs) : byte;
+         { Codes de retour: - 0 si pas d'erreur;
+                            - 1 si FNT = NIL;
+                            - 2 si NUMBER n'est pas valide (autre que dans
+                            1..NB_MAX_FNT).
+         }
+function fnt_select (number : t_fnt_regs) : byte;
+         { Codes de retour: - 0 si pas d'erreur;
+                            - 1 si NUMBER non valide (autre que dans
+                            0..NB_MAX_FNT);
+                            - 2 si la fonte correspondante n'a pas ‚t‚
+                            enregistr‚e par Fnt_Register.
+         }
+function fnt_erase (number : t_fnt_regs) : byte;
+         { Codes de retour: - 0 si pas d'erreur;
+                            - 1 si NUMBER non valide (autre que dans
+                            0..NB_MAX_FNT);
+                            - 2 si la fonte correspondante n'existe pas.
+         }
+procedure fnt_clear;
+          { Efface toutes les fontes de la m‚moire et remet la fonte par
+          d‚faut. }
+
+procedure ecr_char (carac : char);
+          { Ecriture d'un caractŠre dans la fonte courante … la position
+          actuelle. }
+
+procedure ecr_int (nb : integer);
+          { Ecriture d'un entier … la position courante dans la fonte
+          actuelle. }
+
+procedure ecr_str (ch : string);
+          { Ecriture d'une chaine … la position courante. }
+
+procedure ecr_xy (x, y : integer);
+          { Deplacement du curseur. (coordonnees textes). }
+
+procedure ecr_color (forme, fond : byte);
+          { Choix des couleurs de forme et de fond. }
+
+end. { Fin de l'unit‚ 'U_Fnt'. }
